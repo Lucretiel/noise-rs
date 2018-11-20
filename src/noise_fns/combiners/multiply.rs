@@ -2,25 +2,17 @@ use noise_fns::NoiseFn;
 
 /// Noise function that outputs the product of the two output values from two source
 /// functions.
-pub struct Multiply<'a, T: 'a> {
-    /// Outputs a value.
-    pub source1: &'a NoiseFn<T>,
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct Multiply<A, B>(pub A, pub B);
 
-    /// Outputs a value.
-    pub source2: &'a NoiseFn<T>,
-}
-
-impl<'a, T> Multiply<'a, T> {
-    pub fn new(source1: &'a NoiseFn<T>, source2: &'a NoiseFn<T>) -> Self {
-        Multiply { source1, source2 }
+impl<A, B> Multiply<A, B> {
+    pub fn new(lhs: A, rhs: B) -> Self {
+        Multiply(lhs, rhs)
     }
 }
 
-impl<'a, T> NoiseFn<T> for Multiply<'a, T>
-where
-    T: Copy,
-{
+impl<T: Copy, A: NoiseFn<T>, B: NoiseFn<T>> NoiseFn<T> for Multiply<A, B> {
     fn get(&self, point: T) -> f64 {
-        self.source1.get(point) * self.source2.get(point)
+        self.0.get(point) * self.1.get(point)
     }
 }

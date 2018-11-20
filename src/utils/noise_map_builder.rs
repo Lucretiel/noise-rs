@@ -213,9 +213,11 @@ impl<'a> NoiseMapBuilder<'a> for PlaneMapBuilder<'a> {
 
                 let final_value = if self.is_seamless {
                     let sw_value = self.source_module.get([current_x, current_y, 0.0]);
-                    let se_value = self.source_module
+                    let se_value = self
+                        .source_module
                         .get([current_x + x_extent, current_y, 0.0]);
-                    let nw_value = self.source_module
+                    let nw_value = self
+                        .source_module
                         .get([current_x, current_y + y_extent, 0.0]);
                     let ne_value =
                         self.source_module

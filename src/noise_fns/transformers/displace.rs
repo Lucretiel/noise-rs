@@ -1,38 +1,38 @@
 use math::{Point2, Point3, Point4};
-use noise_fns::NoiseFn;
+use noise_fns::{NoiseFn, Zero};
 
 /// Noise function that uses multiple source functions to displace each coordinate
 /// of the input value before returning the output value from the `source` function.
-pub struct Displace<'a, Source: 'a, XDisplace: 'a, YDisplace: 'a, ZDisplace: 'a, UDisplace: 'a> {
+pub struct Displace<Source, XDisplace, YDisplace, ZDisplace, UDisplace> {
     /// Source function that outputs a value
-    pub source: &'a Source,
+    pub source: Source,
 
     /// Displacement function that displaces the _x_ coordinate of the input
     /// value.
-    pub x_displace: &'a XDisplace,
+    pub x_displace: XDisplace,
 
     /// Displacement function that displaces the _y_ coordinate of the input
     /// value.
-    pub y_displace: &'a YDisplace,
+    pub y_displace: YDisplace,
 
     /// Displacement function that displaces the _z_ coordinate of the input
     /// value. Only needed for 3d or higher noise.
-    pub z_displace: &'a ZDisplace,
+    pub z_displace: ZDisplace,
 
     /// Displacement function that displaces the _u_ coordinate of the input
     /// value. Only needed for 4d or higher noise.
-    pub u_displace: &'a UDisplace,
+    pub u_displace: UDisplace,
 }
 
-impl<'a, Source, XDisplace, YDisplace, ZDisplace, UDisplace>
-    Displace<'a, Source, XDisplace, YDisplace, ZDisplace, UDisplace>
+impl<Source, XDisplace, YDisplace, ZDisplace, UDisplace>
+    Displace<Source, XDisplace, YDisplace, ZDisplace, UDisplace>
 {
     pub fn new(
-        source: &'a Source,
-        x_displace: &'a XDisplace,
-        y_displace: &'a YDisplace,
-        z_displace: &'a ZDisplace,
-        u_displace: &'a UDisplace,
+        source: Source,
+        x_displace: XDisplace,
+        y_displace: YDisplace,
+        z_displace: ZDisplace,
+        u_displace: UDisplace,
     ) -> Self {
         Displace {
             source,
@@ -42,11 +42,28 @@ impl<'a, Source, XDisplace, YDisplace, ZDisplace, UDisplace>
             u_displace,
         }
     }
+
+    pub fn new_2d(
+        source: Source,
+        x_displace: XDisplace,
+        y_displace: YDisplace,
+    ) -> Displace<Source, XDisplace, YDisplace, Zero, Zero> {
+        Displace::new(source, x_displace, y_displace, Zero, Zero)
+    }
+
+    pub fn new_3d(
+        source: Source,
+        x_displace: XDisplace,
+        y_displace: YDisplace,
+        z_displace: ZDisplace,
+    ) -> Displace<Source, XDisplace, YDisplace, ZDisplace, Zero> {
+        Displace::new(source, x_displace, y_displace, z_displace, Zero)
+    }
 }
 
 #[cfg_attr(rustfmt, rustfmt_skip)]
-impl<'a, Source, XDisplace, YDisplace, ZDisplace, UDisplace> NoiseFn<Point2<f64>>
-    for Displace<'a, Source, XDisplace, YDisplace, ZDisplace, UDisplace>
+impl<Source, XDisplace, YDisplace, ZDisplace, UDisplace> NoiseFn<Point2<f64>>
+    for Displace<Source, XDisplace, YDisplace, ZDisplace, UDisplace>
     where Source: NoiseFn<Point2<f64>>,
           XDisplace: NoiseFn<Point2<f64>>,
           YDisplace: NoiseFn<Point2<f64>>,
@@ -66,7 +83,7 @@ impl<'a, Source, XDisplace, YDisplace, ZDisplace, UDisplace> NoiseFn<Point2<f64>
 
 #[cfg_attr(rustfmt, rustfmt_skip)]
 impl<'a, Source, XDisplace, YDisplace, ZDisplace, UDisplace> NoiseFn<Point3<f64>>
-    for Displace<'a, Source, XDisplace, YDisplace, ZDisplace, UDisplace>
+    for Displace<Source, XDisplace, YDisplace, ZDisplace, UDisplace>
     where Source: NoiseFn<Point3<f64>>,
           XDisplace: NoiseFn<Point3<f64>>,
           YDisplace: NoiseFn<Point3<f64>>,
@@ -76,7 +93,7 @@ impl<'a, Source, XDisplace, YDisplace, ZDisplace, UDisplace> NoiseFn<Point3<f64>
         // Get the output values from the displacement functions and add them to
         // the corresponding coordinate in the input value. Since this is a 3d
         // function, we only need the x_displace, y_displace, and z_displace
-        // functions. Also, panic if there is no z_displace function defined.
+        // functions.
         let x = point[0] + self.x_displace.get(point);
         let y = point[1] + self.y_displace.get(point);
         let z = point[2] + self.z_displace.get(point);
@@ -89,7 +106,7 @@ impl<'a, Source, XDisplace, YDisplace, ZDisplace, UDisplace> NoiseFn<Point3<f64>
 
 #[cfg_attr(rustfmt, rustfmt_skip)]
 impl<'a, Source, XDisplace, YDisplace, ZDisplace, UDisplace> NoiseFn<Point4<f64>>
-    for Displace<'a, Source, XDisplace, YDisplace, ZDisplace, UDisplace>
+    for Displace<Source, XDisplace, YDisplace, ZDisplace, UDisplace>
     where Source: NoiseFn<Point4<f64>>,
           XDisplace: NoiseFn<Point4<f64>>,
           YDisplace: NoiseFn<Point4<f64>>,
@@ -99,8 +116,7 @@ impl<'a, Source, XDisplace, YDisplace, ZDisplace, UDisplace> NoiseFn<Point4<f64>
     fn get(&self, point: Point4<f64>) -> f64 {
         // Get the output values from the displacement functions and add them to
         // the corresponding coordinate in the input value. Since this is a 4d
-        // function, we need all of the displace functions. Panic if there is no z-
-        // or u-displace function defined.
+        // function, we need all of the displace functions.
         let x = point[0] + self.x_displace.get(point);
         let y = point[1] + self.y_displace.get(point);
         let z = point[2] + self.z_displace.get(point);

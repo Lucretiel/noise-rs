@@ -2,25 +2,17 @@ use noise_fns::NoiseFn;
 
 /// Noise function that outputs the sum of the two output values from two source
 /// functions.
-pub struct Add<'a, T: 'a> {
-    /// Outputs a value.
-    pub source1: &'a NoiseFn<T>,
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct Add<A, B>(pub A, pub B);
 
-    /// Outputs a value.
-    pub source2: &'a NoiseFn<T>,
-}
-
-impl<'a, T> Add<'a, T> {
-    pub fn new(source1: &'a NoiseFn<T>, source2: &'a NoiseFn<T>) -> Self {
-        Add { source1, source2 }
+impl<A, B> Add<A, B> {
+    pub fn new(lhs: A, rhs: B) -> Self {
+        Add(lhs, rhs)
     }
 }
 
-impl<'a, T> NoiseFn<T> for Add<'a, T>
-where
-    T: Copy,
-{
+impl<T: Copy, A: NoiseFn<T>, B: NoiseFn<T>> NoiseFn<T> for Add<A, B> {
     fn get(&self, point: T) -> f64 {
-        self.source1.get(point) + self.source2.get(point)
+        self.0.get(point) + self.1.get(point)
     }
 }

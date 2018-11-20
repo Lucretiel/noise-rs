@@ -2,19 +2,18 @@ use noise_fns::NoiseFn;
 
 /// Noise function that outputs the absolute value of the output value from the
 /// source function.
-pub struct Abs<'a, T: 'a> {
-    /// Outputs a value.
-    pub source: &'a NoiseFn<T>,
-}
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+#[repr(transparent)]
+pub struct Abs<A>(pub A);
 
-impl<'a, T> Abs<'a, T> {
-    pub fn new(source: &'a NoiseFn<T>) -> Self {
-        Abs { source }
+impl<A> Abs<A> {
+    pub fn new(source: A) -> Self {
+        Abs(source)
     }
 }
 
-impl<'a, T> NoiseFn<T> for Abs<'a, T> {
+impl<T, A: NoiseFn<T>> NoiseFn<T> for Abs<A> {
     fn get(&self, point: T) -> f64 {
-        (self.source.get(point)).abs()
+        self.0.get(point).abs()
     }
 }

@@ -25,7 +25,8 @@ impl ColorGradient {
 
     pub fn add_gradient_point(mut self, pos: f64, color: Color) -> Self {
         // check to see if the vector already contains the input point.
-        if !self.gradient_points
+        if !self
+            .gradient_points
             .iter()
             .any(|&x| (x.pos - pos).abs() < std::f64::EPSILON)
         {
@@ -97,7 +98,8 @@ impl ColorGradient {
 
         // Find the first element in the control point array that has a input
         // value larger than the output value from the source module
-        let index = self.gradient_points
+        let index = self
+            .gradient_points
             .iter()
             .position(|&x| (x.pos > clamped_pos))
             .unwrap_or_else(|| self.gradient_points.len());

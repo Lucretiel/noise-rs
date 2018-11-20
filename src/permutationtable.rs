@@ -1,5 +1,8 @@
 use math::{Point2, Point3, Point4};
-use rand::{distributions::{Distribution, Standard}, Rng, SeedableRng, XorShiftRng};
+use rand::{
+    distributions::{Distribution, Standard},
+    Rng, SeedableRng, XorShiftRng,
+};
 use std::fmt;
 
 const TABLE_SIZE: usize = 256;
@@ -42,10 +45,10 @@ impl PermutationTable {
         let mut real = [0; 16];
         real[0] = 1;
         for i in 1..4 {
-            real[0+i*4] = seed as u8;
-            real[1+i*4] = (seed >> 8) as u8;
-            real[2+i*4] = (seed >> 16) as u8;
-            real[3+i*4] = (seed >> 24) as u8;
+            real[0 + i * 4] = seed as u8;
+            real[1 + i * 4] = (seed >> 8) as u8;
+            real[2 + i * 4] = (seed >> 16) as u8;
+            real[3 + i * 4] = (seed >> 24) as u8;
         }
         let mut rng: XorShiftRng = SeedableRng::from_seed(real);
         rng.gen()
@@ -84,8 +87,8 @@ impl fmt::Debug for PermutationTable {
 
 #[cfg(test)]
 mod tests {
-    use {NoiseFn, Perlin, Seedable};
     use rand::random;
+    use {NoiseFn, Perlin, Seedable};
 
     #[test]
     fn test_random_seed() {

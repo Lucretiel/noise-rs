@@ -6,22 +6,22 @@ use noise_fns::NoiseFn;
 ///
 /// This noise function uses linear interpolation to perform the blending
 /// operation.
-pub struct Blend<'a, T: 'a> {
+pub struct Blend<A, B, C> {
     /// Outputs one of the values to blend.
-    pub source1: &'a NoiseFn<T>,
+    pub source1: A,
 
     /// Outputs one of the values to blend.
-    pub source2: &'a NoiseFn<T>,
+    pub source2: B,
 
     /// Determines the weight of the blending operation. Negative values weight
     /// the blend towards the output value from the `source1` function. Positive
     /// values weight the blend towards the output value from the `source2`
     /// function.
-    pub control: &'a NoiseFn<T>,
+    pub control: C,
 }
 
-impl<'a, T> Blend<'a, T> {
-    pub fn new(source1: &'a NoiseFn<T>, source2: &'a NoiseFn<T>, control: &'a NoiseFn<T>) -> Self {
+impl<A, B, C> Blend<A, B, C> {
+    pub fn new(source1: A, source2: B, control: C) -> Self {
         Blend {
             source1,
             source2,
@@ -30,10 +30,7 @@ impl<'a, T> Blend<'a, T> {
     }
 }
 
-impl<'a, T> NoiseFn<T> for Blend<'a, T>
-where
-    T: Copy,
-{
+impl<T: Copy, A: NoiseFn<T>, B: NoiseFn<T>, C: NoiseFn<T>> NoiseFn<T> for Blend<A, B, C> {
     fn get(&self, point: T) -> f64 {
         let lower = self.source1.get(point);
         let upper = self.source2.get(point);

@@ -1,8 +1,8 @@
-use {gradient, math};
 use math::{Point2, Point3};
 use noise_fns::{NoiseFn, Seedable};
 use permutationtable::PermutationTable;
 use std::ops::Add;
+use {gradient, math};
 
 const TO_REAL_CONSTANT_2D: f64 = -0.211_324_865_405_187; // (1 / sqrt(2 + 1) - 1) / 2
 const TO_SIMPLEX_CONSTANT_2D: f64 = 0.366_025_403_784_439; // (sqrt(2 + 1) - 1) / 2
@@ -148,9 +148,11 @@ impl NoiseFn<Point2<f64>> for SuperSimplex {
         let region_sum = math::fold2(simplex_rel_coords, Add::add).floor();
         let index = ((region_sum >= 1.0) as usize) << 2
             | ((simplex_rel_coords[0] - simplex_rel_coords[1] * 0.5 + 1.0 - region_sum * 0.5 >= 1.0)
-                as usize) << 3
+                as usize)
+                << 3
             | ((simplex_rel_coords[1] - simplex_rel_coords[0] * 0.5 + 1.0 - region_sum * 0.5 >= 1.0)
-                as usize) << 4;
+                as usize)
+                << 4;
 
         // Transform barycentric coordinates to real space
         let to_real_offset = math::fold2(simplex_rel_coords, Add::add) * TO_REAL_CONSTANT_2D;
@@ -190,21 +192,35 @@ impl NoiseFn<Point3<f64>> for SuperSimplex {
 
         // Create indices to lookup table from barycentric coordinates
         let index = ((simplex_rel_coords[0] + simplex_rel_coords[1] + simplex_rel_coords[2] >= 1.5)
-            as usize) << 2
+            as usize)
+            << 2
             | ((-simplex_rel_coords[0] + simplex_rel_coords[1] + simplex_rel_coords[2] >= 0.5)
-                as usize) << 3
+                as usize)
+                << 3
             | ((simplex_rel_coords[0] - simplex_rel_coords[1] + simplex_rel_coords[2] >= 0.5)
-                as usize) << 4
+                as usize)
+                << 4
             | ((simplex_rel_coords[0] + simplex_rel_coords[1] - simplex_rel_coords[2] >= 0.5)
-                as usize) << 5;
-        let second_index = ((second_simplex_rel_coords[0] + second_simplex_rel_coords[1]
-            + second_simplex_rel_coords[2] >= 1.5) as usize) << 2
-            | ((-second_simplex_rel_coords[0] + second_simplex_rel_coords[1]
-                + second_simplex_rel_coords[2] >= 0.5) as usize) << 3
+                as usize)
+                << 5;
+        let second_index = ((second_simplex_rel_coords[0]
+            + second_simplex_rel_coords[1]
+            + second_simplex_rel_coords[2]
+            >= 1.5) as usize)
+            << 2
+            | ((-second_simplex_rel_coords[0]
+                + second_simplex_rel_coords[1]
+                + second_simplex_rel_coords[2]
+                >= 0.5) as usize)
+                << 3
             | ((second_simplex_rel_coords[0] - second_simplex_rel_coords[1]
-                + second_simplex_rel_coords[2] >= 0.5) as usize) << 4
+                + second_simplex_rel_coords[2]
+                >= 0.5) as usize)
+                << 4
             | ((second_simplex_rel_coords[0] + second_simplex_rel_coords[1]
-                - second_simplex_rel_coords[2] >= 0.5) as usize) << 5;
+                - second_simplex_rel_coords[2]
+                >= 0.5) as usize)
+                << 5;
 
         // Sum contributions from first lattice
         for &lattice_lookup in &LATTICE_LOOKUP_3D[index..index + 4] {

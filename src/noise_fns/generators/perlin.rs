@@ -1,7 +1,7 @@
-use {gradient, math};
 use math::{Point2, Point3, Point4, Vector2, Vector3, Vector4};
 use noise_fns::{NoiseFn, Seedable};
 use permutationtable::PermutationTable;
+use {gradient, math};
 
 /// Noise function that outputs 2/3/4-dimensional Perlin noise.
 #[derive(Clone, Copy, Debug)]
@@ -380,8 +380,23 @@ impl NoiseFn<Point4<f64>> for Perlin {
 
         // Multiply by arbitrary value to scale to -1..1
         math::clamp(
-            (f0000 + f1000 + f0100 + f1100 + f0010 + f1010 + f0110 + f1110 + f0001 + f1001 + f0101
-                + f1101 + f0011 + f1011 + f0111 + f1111) * 4.424369240215691,
+            (f0000
+                + f1000
+                + f0100
+                + f1100
+                + f0010
+                + f1010
+                + f0110
+                + f1110
+                + f0001
+                + f1001
+                + f0101
+                + f1101
+                + f0011
+                + f1011
+                + f0111
+                + f1111)
+                * 4.424369240215691,
             -1.0,
             1.0,
         )

@@ -2,25 +2,17 @@ use noise_fns::NoiseFn;
 
 /// Noise function that raises the output value from the first source function
 /// to the power of the output value of the second source function.
-pub struct Power<'a, T: 'a> {
-    /// Outputs a value.
-    pub source1: &'a NoiseFn<T>,
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct Power<A, B>(pub A, pub B);
 
-    /// Outputs a value.
-    pub source2: &'a NoiseFn<T>,
-}
-
-impl<'a, T> Power<'a, T> {
-    pub fn new(source1: &'a NoiseFn<T>, source2: &'a NoiseFn<T>) -> Self {
-        Power { source1, source2 }
+impl<A, B> Power<A, B> {
+    pub fn new(lhs: A, rhs: B) -> Self {
+        Power(lhs, rhs)
     }
 }
 
-impl<'a, T> NoiseFn<T> for Power<'a, T>
-where
-    T: Copy,
-{
+impl<T: Copy, A: NoiseFn<T>, B: NoiseFn<T>> NoiseFn<T> for Power<A, B> {
     fn get(&self, point: T) -> f64 {
-        (self.source1.get(point)).powf(self.source2.get(point))
+        self.0.get(point).powf(self.1.get(point))
     }
 }

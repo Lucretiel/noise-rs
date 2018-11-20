@@ -2,25 +2,17 @@ use noise_fns::NoiseFn;
 
 /// Noise function that outputs the larger of the two output values from two source
 /// functions.
-pub struct Max<'a, T: 'a> {
-    /// Outputs a value.
-    pub source1: &'a NoiseFn<T>,
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct Max<A, B>(pub A, pub B);
 
-    /// Outputs a value.
-    pub source2: &'a NoiseFn<T>,
-}
-
-impl<'a, T> Max<'a, T> {
-    pub fn new(source1: &'a NoiseFn<T>, source2: &'a NoiseFn<T>) -> Self {
-        Max { source1, source2 }
+impl<A, B> Max<A, B> {
+    pub fn new(lhs: A, rhs: B) -> Self {
+        Max(lhs, rhs)
     }
 }
 
-impl<'a, T> NoiseFn<T> for Max<'a, T>
-where
-    T: Copy,
-{
+impl<T: Copy, A: NoiseFn<T>, B: NoiseFn<T>> NoiseFn<T> for Max<A, B> {
     fn get(&self, point: T) -> f64 {
-        (self.source1.get(point)).max(self.source2.get(point))
+        self.0.get(point).max(self.1.get(point))
     }
 }

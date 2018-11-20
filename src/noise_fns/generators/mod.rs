@@ -7,9 +7,10 @@ pub use self::perlin::*;
 pub use self::super_simplex::*;
 pub use self::value::*;
 pub use self::worley::*;
+pub use self::zero::*;
 
-mod constant;
 mod checkerboard;
+mod constant;
 mod cylinders;
 mod fractals;
 mod open_simplex;
@@ -17,3 +18,4 @@ mod perlin;
 mod super_simplex;
 mod value;
 mod worley;
+mod zero;
