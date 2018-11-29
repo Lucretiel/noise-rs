@@ -17,21 +17,23 @@ use std;
 /// four control points to the curve. If there is less than four control
 /// points, the get() method panics. Each control point can have any input
 /// and output value, although no two control points can have the same input.
-pub struct Curve<S> {
+#[derive(Debug, Clone, PartialEq)]
+pub struct Curve<Source> {
     /// Outputs a value.
-    pub source: S,
+    pub source: Source,
 
     /// Vec that stores the control points.
     control_points: Vec<ControlPoint<f64>>,
 }
 
+#[derive(Debug, Default, Clone, PartialEq, Eq)]
 struct ControlPoint<T> {
     input: T,
     output: T,
 }
 
-impl<S> Curve<S> {
-    pub fn new(source: S) -> Self {
+impl<Source> Curve<Source> {
+    pub fn new(source: Source) -> Self {
         Curve {
             source,
             control_points: Vec::with_capacity(4),
@@ -67,7 +69,13 @@ impl<S> Curve<S> {
     }
 }
 
-impl<T, S: NoiseFn<T>> NoiseFn<T> for Curve<S> {
+impl<Source: Default> Default for Curve<Source> {
+    fn default() -> Self {
+        Self::new(Source::default())
+    }
+}
+
+impl<T, Source: NoiseFn<T>> NoiseFn<T> for Curve<Source> {
     fn get(&self, point: T) -> f64 {
         // confirm that there's at least 4 control points in the vector.
         assert!(self.control_points.len() >= 4);

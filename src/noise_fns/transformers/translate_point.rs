@@ -6,9 +6,10 @@ use noise_fns::NoiseFn;
 ///
 /// The get() method moves the coordinates of the input value by a translation
 /// amount before returning the output value from the source function.
-pub struct TranslatePoint<'a, Source: 'a> {
+#[derive(Debug, Clone, Default, PartialEq)]
+pub struct TranslatePoint<Source> {
     /// Source function that outputs a value
-    pub source: &'a Source,
+    pub source: Source,
 
     /// Translation amount applied to the _x_ coordinate of the input value.
     /// The default translation amount is set to 0.0.
@@ -27,8 +28,8 @@ pub struct TranslatePoint<'a, Source: 'a> {
     pub u_translation: f64,
 }
 
-impl<'a, Source> TranslatePoint<'a, Source> {
-    pub fn new(source: &'a Source) -> Self {
+impl<'a, Source> TranslatePoint<Source> {
+    pub fn new(source: Source) -> Self {
         TranslatePoint {
             source,
             x_translation: 0.0,
@@ -104,7 +105,7 @@ impl<'a, Source> TranslatePoint<'a, Source> {
     }
 }
 
-impl<'a, Source> NoiseFn<Point2<f64>> for TranslatePoint<'a, Source>
+impl<Source> NoiseFn<Point2<f64>> for TranslatePoint<Source>
 where
     Source: NoiseFn<Point2<f64>>,
 {
@@ -114,9 +115,9 @@ where
     }
 }
 
-impl<'a, Source> NoiseFn<Point3<f64>> for TranslatePoint<'a, Source>
+impl<Source: NoiseFn<Point3<f64>>> NoiseFn<Point3<f64>> for TranslatePoint<Source>
 where
-    Source: NoiseFn<Point3<f64>>,
+    Source: ,
 {
     fn get(&self, point: Point3<f64>) -> f64 {
         self.source.get([
@@ -127,10 +128,7 @@ where
     }
 }
 
-impl<'a, Source> NoiseFn<Point4<f64>> for TranslatePoint<'a, Source>
-where
-    Source: NoiseFn<Point4<f64>>,
-{
+impl<Source: NoiseFn<Point4<f64>>> NoiseFn<Point4<f64>> for TranslatePoint<Source> {
     fn get(&self, point: Point4<f64>) -> f64 {
         self.source.get([
             point[0] + self.x_translation,

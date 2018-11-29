@@ -3,7 +3,7 @@ use noise_fns::NoiseFn;
 
 /// Noise function that clamps the output value from the source function to a
 /// range of values.
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Clamp<A> {
     /// Outputs a value.
     pub source: A,

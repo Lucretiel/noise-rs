@@ -1,19 +1,12 @@
 use noise_fns::NoiseFn;
 
 /// Noise function that inverts the output value from the source function.
-pub struct Invert<'a, T: 'a> {
-    /// Outputs a value.
-    pub source: &'a NoiseFn<T>,
-}
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+#[repr(transparent)]
+pub struct Invert<Source>(pub Source);
 
-impl<'a, T> Invert<'a, T> {
-    pub fn new(source: &'a NoiseFn<T>) -> Self {
-        Invert { source }
-    }
-}
-
-impl<'a, T> NoiseFn<T> for Invert<'a, T> {
+impl<T, Source: NoiseFn<T>> NoiseFn<T> for Invert<Source> {
     fn get(&self, point: T) -> f64 {
-        -self.source.get(point)
+        1.0 / self.0.get(point)
     }
 }

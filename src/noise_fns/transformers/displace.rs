@@ -3,6 +3,7 @@ use noise_fns::{NoiseFn, Zero};
 
 /// Noise function that uses multiple source functions to displace each coordinate
 /// of the input value before returning the output value from the `source` function.
+#[derive(Debug, Clone, Default)]
 pub struct Displace<Source, XDisplace, YDisplace, ZDisplace, UDisplace> {
     /// Source function that outputs a value
     pub source: Source,
@@ -61,12 +62,13 @@ impl<Source, XDisplace, YDisplace, ZDisplace, UDisplace>
     }
 }
 
-#[cfg_attr(rustfmt, rustfmt_skip)]
-impl<Source, XDisplace, YDisplace, ZDisplace, UDisplace> NoiseFn<Point2<f64>>
-    for Displace<Source, XDisplace, YDisplace, ZDisplace, UDisplace>
-    where Source: NoiseFn<Point2<f64>>,
-          XDisplace: NoiseFn<Point2<f64>>,
-          YDisplace: NoiseFn<Point2<f64>>,
+impl<
+        Source: NoiseFn<Point2<f64>>,
+        XDisplace: NoiseFn<Point2<f64>>,
+        YDisplace: NoiseFn<Point2<f64>>,
+        ZDisplace,
+        UDisplace,
+    > NoiseFn<Point2<f64>> for Displace<Source, XDisplace, YDisplace, ZDisplace, UDisplace>
 {
     fn get(&self, point: Point2<f64>) -> f64 {
         // Get the output values from the displacement functions and add them to
@@ -81,13 +83,13 @@ impl<Source, XDisplace, YDisplace, ZDisplace, UDisplace> NoiseFn<Point2<f64>>
     }
 }
 
-#[cfg_attr(rustfmt, rustfmt_skip)]
-impl<'a, Source, XDisplace, YDisplace, ZDisplace, UDisplace> NoiseFn<Point3<f64>>
-    for Displace<Source, XDisplace, YDisplace, ZDisplace, UDisplace>
-    where Source: NoiseFn<Point3<f64>>,
-          XDisplace: NoiseFn<Point3<f64>>,
-          YDisplace: NoiseFn<Point3<f64>>,
-          ZDisplace: NoiseFn<Point3<f64>>,
+impl<
+        Source: NoiseFn<Point3<f64>>,
+        XDisplace: NoiseFn<Point3<f64>>,
+        YDisplace: NoiseFn<Point3<f64>>,
+        ZDisplace: NoiseFn<Point3<f64>>,
+        UDisplace,
+    > NoiseFn<Point3<f64>> for Displace<Source, XDisplace, YDisplace, ZDisplace, UDisplace>
 {
     fn get(&self, point: Point3<f64>) -> f64 {
         // Get the output values from the displacement functions and add them to
@@ -104,14 +106,13 @@ impl<'a, Source, XDisplace, YDisplace, ZDisplace, UDisplace> NoiseFn<Point3<f64>
     }
 }
 
-#[cfg_attr(rustfmt, rustfmt_skip)]
-impl<'a, Source, XDisplace, YDisplace, ZDisplace, UDisplace> NoiseFn<Point4<f64>>
-    for Displace<Source, XDisplace, YDisplace, ZDisplace, UDisplace>
-    where Source: NoiseFn<Point4<f64>>,
-          XDisplace: NoiseFn<Point4<f64>>,
-          YDisplace: NoiseFn<Point4<f64>>,
-          ZDisplace: NoiseFn<Point4<f64>>,
-          UDisplace: NoiseFn<Point4<f64>>,
+impl<
+        Source: NoiseFn<Point4<f64>>,
+        XDisplace: NoiseFn<Point4<f64>>,
+        YDisplace: NoiseFn<Point4<f64>>,
+        ZDisplace: NoiseFn<Point4<f64>>,
+        UDisplace: NoiseFn<Point4<f64>>,
+    > NoiseFn<Point4<f64>> for Displace<Source, XDisplace, YDisplace, ZDisplace, UDisplace>
 {
     fn get(&self, point: Point4<f64>) -> f64 {
         // Get the output values from the displacement functions and add them to

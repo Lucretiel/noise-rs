@@ -5,9 +5,10 @@ use noise_fns::NoiseFn;
 ///
 /// The function retrieves the output value from the source function, multiplies
 /// it with the scaling factor, adds the bias to it, then outputs the value.
-pub struct ScaleBias<'a, T: 'a> {
+#[derive(Debug, Clone, PartialEq)]
+pub struct ScaleBias<Source> {
     /// Outputs a value.
-    pub source: &'a NoiseFn<T>,
+    pub source: Source,
 
     /// Scaling factor to apply to the output value from the source function.
     /// The default value is 1.0.
@@ -18,8 +19,8 @@ pub struct ScaleBias<'a, T: 'a> {
     pub bias: f64,
 }
 
-impl<'a, T> ScaleBias<'a, T> {
-    pub fn new(source: &'a NoiseFn<T>) -> Self {
+impl<Source> ScaleBias<Source> {
+    pub fn new(source: Source) -> Self {
         ScaleBias {
             source,
             scale: 1.0,
@@ -36,14 +37,20 @@ impl<'a, T> ScaleBias<'a, T> {
     }
 }
 
-impl<'a, T> NoiseFn<T> for ScaleBias<'a, T> {
+impl<Source: Default> Default for ScaleBias<Source> {
+    fn default() -> Self {
+        Self::new(Source::default())
+    }
+}
+
+impl<T, Source: NoiseFn<T>> NoiseFn<T> for ScaleBias<Source> {
     #[cfg(not(target_os = "emscripten"))]
     fn get(&self, point: T) -> f64 {
-        (self.source.get(point)).mul_add(self.scale, self.bias)
+        self.source.get(point).mul_add(self.scale, self.bias)
     }
 
     #[cfg(target_os = "emscripten")]
     fn get(&self, point: T) -> f64 {
-        (self.source.get(point) * self.scale) + self.bias
+       (self.source.get(point) * self.scale) + self.bias
     }
 }

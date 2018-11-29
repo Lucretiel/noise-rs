@@ -10,6 +10,7 @@ use std::path::*;
 const RASTER_MAX_WIDTH: u16 = 32_767;
 const RASTER_MAX_HEIGHT: u16 = 32_767;
 
+#[derive(Debug, Clone, Default, PartialEq)]
 pub struct NoiseMap {
     size: (usize, usize),
     border_value: f64,
@@ -119,16 +120,6 @@ impl NoiseMap {
     }
 
     fn initialize() -> Self {
-        NoiseMap {
-            size: (0, 0),
-            border_value: 0.0,
-            map: Vec::new(),
-        }
-    }
-}
-
-impl Default for NoiseMap {
-    fn default() -> Self {
-        NoiseMap::initialize()
+        NoiseMap::default()
     }
 }

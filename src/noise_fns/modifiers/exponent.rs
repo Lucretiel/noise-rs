@@ -9,7 +9,7 @@ use math::scale_shift;
 /// this noise function first normalizes the output value (the range becomes 0.0
 /// to 1.0), maps that value onto an exponential curve, then rescales that
 /// value back to the original range.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Exponent<T> {
     /// Outputs a value.
     pub source: T,

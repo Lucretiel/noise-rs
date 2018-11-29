@@ -9,6 +9,7 @@ use noise_fns::NoiseFn;
 ///
 /// The coordinate system of the input value is assumed to be "right-handed"
 /// (_x_ increases to the right, _y_ increases upward, and _z_ increases inward).
+#[derive(Debug, Clone, Default)]
 pub struct RotatePoint<Source> {
     /// Source function that outputs a value
     pub source: Source,
@@ -78,14 +79,7 @@ impl<Source> RotatePoint<Source> {
     }
 }
 
-impl <Source: Default> Default for RotatePoint<Source> {
-    fn default() -> Self {
-        RotatePoint::new(Source::default())
-    }
-}
-
-impl<Source: NoiseFn<Point2<f64>>> NoiseFn<Point2<f64>> for RotatePoint<Source>
-{
+impl<Source: NoiseFn<Point2<f64>>> NoiseFn<Point2<f64>> for RotatePoint<Source> {
     fn get(&self, point: Point2<f64>) -> f64 {
         // In two dimensions, the plane is _xy_, and we rotate around the
         // z-axis.
@@ -102,8 +96,7 @@ impl<Source: NoiseFn<Point2<f64>>> NoiseFn<Point2<f64>> for RotatePoint<Source>
     }
 }
 
-impl<Source: NoiseFn<Point3<f64>>> NoiseFn<Point3<f64>> for RotatePoint<Source>
-{
+impl<Source: NoiseFn<Point3<f64>>> NoiseFn<Point3<f64>> for RotatePoint<Source> {
     fn get(&self, point: Point3<f64>) -> f64 {
         // In three dimensions, we could rotate around any of the x, y, or z
         // axes. Need a more complicated function to handle this case.
@@ -134,9 +127,7 @@ impl<Source: NoiseFn<Point3<f64>>> NoiseFn<Point3<f64>> for RotatePoint<Source>
     }
 }
 
-impl<Source: NoiseFn<Point4<f64>>> NoiseFn<Point4<f64>> for RotatePoint<Source>
-
-{
+impl<Source: NoiseFn<Point4<f64>>> NoiseFn<Point4<f64>> for RotatePoint<Source> {
     fn get(&self, _point: Point4<f64>) -> f64 {
         // 4d rotations are hard.
         unimplemented!();

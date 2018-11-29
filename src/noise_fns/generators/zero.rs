@@ -15,7 +15,7 @@ impl Zero {
 }
 
 impl<T> NoiseFn<T> for Zero {
-	#[inline]
+    #[inline]
     fn get(&self, _point: T) -> f64 {
         0.0
     }

@@ -5,6 +5,7 @@ pub use self::exponent::*;
 pub use self::invert::*;
 pub use self::scale_bias::*;
 pub use self::terrace::*;
+pub use self::negate::*;
 
 mod abs;
 mod clamp;
@@ -13,3 +14,4 @@ mod exponent;
 mod invert;
 mod scale_bias;
 mod terrace;
+mod negate;
